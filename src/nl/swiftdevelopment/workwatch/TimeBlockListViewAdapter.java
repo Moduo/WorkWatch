@@ -57,7 +57,6 @@ public class TimeBlockListViewAdapter extends ArrayAdapter<TimeBlock> {
 		TimeBlock timeBlock = this.listOfBlocks.get(position);
 		
 		// Putting TimeBlock objects in the views
-		cell.time.setText("" + timeBlock.getTime());
 		cell.title.setText(timeBlock.getTitle());
 
 		return convertView;

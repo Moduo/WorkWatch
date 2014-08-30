@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 public class Time {
@@ -13,30 +14,56 @@ public class Time {
 	private String amount;
 	protected MainActivity context;
 	private int id;
+	private View view;
+	private Timer timer;
+	private boolean isRunning;
 
-	public Time(Context context){
+	public Time(Context context, int id, View view) {
 		this.context = (MainActivity) context;
+		this.id = id;
+		this.view = view;
 		start();
 	}
-	
-	
+
 	public String getCurrentTime() {
 		return amount;
 	}
+	
 
-	public void start() {
-		Timer timer = new Timer();
-		timer.schedule(new UpdateUITask(), 0, 1000);
-
+	public boolean isRunning() {
+		return isRunning;
 	}
 
-	public void pause() {
+	public void start() {
+		timer = new Timer();
+		timer.schedule(new UpdateUITask(), 0, 1000);
+		isRunning = true;
+	}
 
+	public void stop() {
+		isRunning = false;
+		timer.cancel();
+		timer.purge();
 	}
 
 	public void resume(String curTime) {
+		if (isRunning == false) {
+			// Declare new timer
+			this.timer = new Timer();
 
+			isRunning = true;
+			// Devide the current time into hours, minutes and seconds
+			int hours = Integer.parseInt(curTime.substring(0, 1));
+			int minutes = Integer.parseInt(curTime.substring(2, 4));
+			int seconds = Integer.parseInt(curTime.substring(5, 7));
+
+			timer.schedule(new UpdateUITask(hours, minutes, seconds), 0, 1000);
+		}else{
+			System.out.println("Timer is already running.");
+		}
 	}
+	
+	
 
 	public class UpdateUITask extends TimerTask {
 
@@ -84,17 +111,20 @@ public class Time {
 					+ numberFormatter.format(nSeconds);
 			Log.d("a", amount);
 
-			 context.runOnUiThread(new Runnable() {
-	                @Override
-	                public void run() {
-	                	try{
-	                    TextView timeLabel = (TextView) context.findViewById(R.id.block_time);
-	                    timeLabel.setText(amount);
-	                	}catch(Exception e){
-	                		Log.d("NEW", "NPE");
-	                	}
-	                }
-	            });
+			context.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						
+						TextView blockTime = (TextView) context.gridView.getChildAt(id).findViewById(R.id.block_time);
+						blockTime.setText(amount);
+						
+						Log.d("ID", "" + view.getId());
+					} catch (Exception e) {
+						Log.d("NEW", "NPE");
+					}
+				}
+			});
 		}
 	}
 }
