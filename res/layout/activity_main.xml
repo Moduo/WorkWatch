@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.82"
         android:columnCount="1" 
-        android:background="#FFF">
+        android:background="@drawable/seperator">
 
         <GridView
             android:id="@+id/grid_view"
@@ -27,15 +27,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#E6E6E6"
-        android:orientation="horizontal" >
+        android:orientation="horizontal" 
+        android:background="#f3f3f3">
 
         <EditText
             android:id="@+id/timeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ems="10" >
+            android:ems="10"
+            android:inputType="textCapSentences" >
 
         </EditText>
 

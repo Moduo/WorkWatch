@@ -22,18 +22,55 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int block=0x7f020000;
-        public static final int border=0x7f020001;
-        public static final int circular_progressbar=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int seperator=0x7f020004;
+        public static final int ab_background_textured_workwatch=0x7f020000;
+        public static final int ab_bottom_solid_workwatch=0x7f020001;
+        public static final int ab_solid_workwatch=0x7f020002;
+        public static final int ab_stacked_solid_workwatch=0x7f020003;
+        public static final int ab_texture_tile_workwatch=0x7f020004;
+        public static final int ab_transparent_workwatch=0x7f020005;
+        public static final int block=0x7f020006;
+        public static final int border=0x7f020007;
+        public static final int btn_cab_done_default_workwatch=0x7f020008;
+        public static final int btn_cab_done_focused_workwatch=0x7f020009;
+        public static final int btn_cab_done_pressed_workwatch=0x7f02000a;
+        public static final int btn_cab_done_workwatch=0x7f02000b;
+        public static final int cab_background_bottom_workwatch=0x7f02000c;
+        public static final int cab_background_top_workwatch=0x7f02000d;
+        public static final int circular_progressbar=0x7f02000e;
+        public static final int ic_launcher=0x7f02000f;
+        public static final int list_focused_workwatch=0x7f020010;
+        public static final int list_pressed_workwatch=0x7f020011;
+        public static final int menu_dropdown_panel_workwatch=0x7f020012;
+        public static final int pause=0x7f020013;
+        public static final int progress_bg_workwatch=0x7f020014;
+        public static final int progress_horizontal_workwatch=0x7f020015;
+        public static final int progress_primary_workwatch=0x7f020016;
+        public static final int progress_secondary_workwatch=0x7f020017;
+        public static final int selectable_background_workwatch=0x7f020018;
+        public static final int seperator=0x7f020019;
+        public static final int spinner_ab_default_workwatch=0x7f02001a;
+        public static final int spinner_ab_disabled_workwatch=0x7f02001b;
+        public static final int spinner_ab_focused_workwatch=0x7f02001c;
+        public static final int spinner_ab_pressed_workwatch=0x7f02001d;
+        public static final int spinner_background_ab_workwatch=0x7f02001e;
+        public static final int tab_indicator_ab_workwatch=0x7f02001f;
+        public static final int tab_selected_focused_workwatch=0x7f020020;
+        public static final int tab_selected_pressed_workwatch=0x7f020021;
+        public static final int tab_selected_workwatch=0x7f020022;
+        public static final int tab_unselected_focused_workwatch=0x7f020023;
+        public static final int tab_unselected_pressed_workwatch=0x7f020024;
+        public static final int tab_unselected_workwatch=0x7f020025;
     }
     public static final class id {
-        public static final int action_settings=0x7f080005;
+        public static final int action_settings=0x7f080009;
         public static final int addBtn=0x7f080002;
-        public static final int block_time=0x7f080003;
-        public static final int block_title=0x7f080004;
+        public static final int block_time=0x7f080005;
+        public static final int block_title=0x7f080006;
         public static final int grid_view=0x7f080000;
+        public static final int mainLinear=0x7f080004;
+        public static final int overlay=0x7f080007;
+        public static final int pause=0x7f080008;
+        public static final int root_view=0x7f080003;
         public static final int timeLabel=0x7f080001;
     }
     public static final class layout {
@@ -53,6 +90,10 @@ public final class R {
         public static final int yes=0x7f050006;
     }
     public static final class style {
+        public static final int ActionBar_Solid_Workwatch=0x7f060003;
+        public static final int ActionBar_Transparent_Workwatch=0x7f060004;
+        public static final int ActionBarTabStyle_Workwatch=0x7f060007;
+        public static final int ActionButton_CloseMode_Workwatch=0x7f06000a;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -79,5 +120,13 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f060001;
+        public static final int DropDownListView_Workwatch=0x7f060006;
+        public static final int DropDownNav_Workwatch=0x7f060008;
+        public static final int PopupMenu_Workwatch=0x7f060005;
+        public static final int ProgressBar_Workwatch=0x7f060009;
+        public static final int Theme_Workwatch=0x7f060002;
+        /**  this style is only referenced in a Light.DarkActionBar based theme 
+         */
+        public static final int Theme_Workwatch_Widget=0x7f06000b;
     }
 }

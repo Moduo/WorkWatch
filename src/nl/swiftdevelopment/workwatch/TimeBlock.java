@@ -1,5 +1,7 @@
 package nl.swiftdevelopment.workwatch;
 
+import java.util.ArrayList;
+
 
 public class TimeBlock {
 	
@@ -27,6 +29,12 @@ public class TimeBlock {
 		this.title = title;
 	}
 	
-	
+	public static void resetIdsOfTimes(ArrayList<TimeBlock> listOfBlocks){
+		int i = 0;
+		for(TimeBlock tb : listOfBlocks){
+			tb.time.setId(i);
+			i++;
+		}
+	}
 
 }

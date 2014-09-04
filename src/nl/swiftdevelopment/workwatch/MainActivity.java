@@ -6,11 +6,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -31,7 +34,7 @@ public class MainActivity extends Activity {
 
 		listOfBlocks = new ArrayList<TimeBlock>();
 
-		TimeBlockListViewAdapter adapter = new TimeBlockListViewAdapter(this,
+		final TimeBlockListViewAdapter adapter = new TimeBlockListViewAdapter(this,
 				android.R.layout.simple_list_item_1, listOfBlocks, this);
 
 		gridView.setAdapter(adapter);
@@ -47,25 +50,44 @@ public class MainActivity extends Activity {
 				label.setText("");
 			}
 		});
-		
+
 		/****************************** Stop watch ***************************/
 		gridView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				
-				TextView timeTV = (TextView) gridView.getChildAt((int) id).findViewById(R.id.block_time);
+
+				TextView timeTV = (TextView) gridView.getChildAt((int) id)
+						.findViewById(R.id.block_time);
 				String currentTime = timeTV.getText() + "";
-				
+
 				TimeBlock timeBlock = listOfBlocks.get(position);
-				if (timeBlock.time.isRunning() == true){
+				if (timeBlock.time.isRunning() == true) {
 					timeBlock.time.stop();
-				}else{
+				} else {
 					timeBlock.time.resume(currentTime);
 				}
+
+			}
+			
+			
+
+		});
+		gridView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+
+				listOfBlocks.get(position).time.stop();
+				listOfBlocks.remove(position);
 				
+				TimeBlock.resetIdsOfTimes(listOfBlocks);
 				
+				adapter.notifyDataSetChanged();
+				Log.d("REMOVE", "Item with position " +position+ " has been removed.");
+				return true;
 			}
 			
 		});
@@ -119,9 +141,26 @@ public class MainActivity extends Activity {
 
 	}
 
+	public static void hideSoftKeyboard(Activity activity) {
+		InputMethodManager inputMethodManager = (InputMethodManager) activity
+				.getSystemService(Activity.INPUT_METHOD_SERVICE);
+		inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus()
+				.getWindowToken(), 0);
+	}
+
 	public void addTimeBlock(String label, View v) {
 		listOfBlocks.add(new TimeBlock(new Time(this, listOfBlocks.size(), v),
 				label));
+		Log.d("SIZE", "List size: " + listOfBlocks.size());
+		if (listOfBlocks.size() > 1) {
+			// Get the previously made time block.
+			TimeBlock timeBlock = listOfBlocks.get(listOfBlocks.size() - 2);
+			if (timeBlock.time.isRunning() == true) {
+				timeBlock.time.stop();
+			}
+		}
+
+		hideSoftKeyboard(this);
 	}
 
 }

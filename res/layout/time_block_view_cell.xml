@@ -1,29 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/block" >
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/block_time"
+    <LinearLayout
+        android:id="@+id/mainLinear"
         android:layout_width="match_parent"
-        android:layout_height="100dip"
-        android:gravity="center"
-        android:background="@drawable/seperator"
-        android:textSize="14pt"
-        
-        android:layout_margin="0px"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_height="match_parent"
+        android:background="@drawable/border"
+        android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/block_title"
+        <TextView
+            android:id="@+id/block_time"
+            android:layout_width="match_parent"
+            android:layout_height="100dip"
+            android:layout_margin="0px"
+            android:background="#fff"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="14pt" />
+
+        <TextView
+            android:id="@+id/block_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0px"
+            android:layout_marginTop="5dip"
+            android:background="#f4f2f3"
+            android:gravity="center_horizontal"
+            android:padding="15dip" />
+    </LinearLayout>
+
+    <GridLayout
+        android:id="@+id/overlay"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dip"
-        android:background="#eeeeee"
-        android:padding="15dip"
-        android:layout_margin="0px"
-        android:gravity="center_horizontal" />
+        android:layout_height="match_parent"
+        android:background="#50999999"
+        android:columnCount="1"
+        android:orientation="vertical"
+        android:visibility="invisible" >
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_gravity="center"
+            android:layout_row="0"
+            android:src="@drawable/pause" />
+    </GridLayout>
+   
+</FrameLayout>
