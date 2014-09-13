@@ -19,7 +19,6 @@
             android:layout_margin="0px"
             android:background="#fff"
             android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="14pt" />
 
         <TextView

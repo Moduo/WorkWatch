@@ -8,5 +8,8 @@
     <string name="dialog_close_app">Are you sure you want to close Work Watch and lose all your watches?</string>
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="create">Create</string>
+    <string name="categories">Categories</string>
 
 </resources>

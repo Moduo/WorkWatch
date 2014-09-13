@@ -13,7 +13,7 @@ import android.widget.TextView;
 public class Time {
 	private final static DecimalFormat numberFormatter = new DecimalFormat("00");
 	private String amount;
-	protected MainActivity context;
+	protected WatchOverviewActivity context;
 	private int id;
 	private View view;
 	private Timer timer;
@@ -21,7 +21,7 @@ public class Time {
 	GridLayout layout;
 
 	public Time(Context context, int id, View view) {
-		this.context = (MainActivity) context;
+		this.context = (WatchOverviewActivity) context;
 		this.id = id;
 		this.view = view;
 		start();
@@ -105,16 +105,16 @@ public class Time {
 		displayPause(true);
 	}
 
-	public void resume(String curTime) {
+	public void resume() {
 		if (isRunning == false) {
 			// Declare new timer
 			this.timer = new Timer();
 
 			isRunning = true;
 			// Devide the current time into hours, minutes and seconds
-			int hours = Integer.parseInt(curTime.substring(0, 1));
-			int minutes = Integer.parseInt(curTime.substring(2, 4));
-			int seconds = Integer.parseInt(curTime.substring(5, 7));
+			int hours = Integer.parseInt(amount.substring(0, 1));
+			int minutes = Integer.parseInt(amount.substring(2, 4));
+			int seconds = Integer.parseInt(amount.substring(5, 7));
 
 			timer.schedule(new UpdateUITask(hours, minutes, seconds), 0, 1000);
 
