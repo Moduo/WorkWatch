@@ -2,6 +2,10 @@ package nl.swiftdevelopment.workwatch;
 
 import java.util.ArrayList;
 
+import nl.swiftdevelopment.workwatch.models.Category;
+import nl.swiftdevelopment.workwatch.models.Time;
+import nl.swiftdevelopment.workwatch.models.TimeBlock;
+import nl.swiftdevelopment.workwatch.models.TimeBlockListViewAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;

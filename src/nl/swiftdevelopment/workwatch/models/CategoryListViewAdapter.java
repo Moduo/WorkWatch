@@ -1,7 +1,10 @@
-package nl.swiftdevelopment.workwatch;
+package nl.swiftdevelopment.workwatch.models;
 
 import java.util.ArrayList;
 
+import nl.swiftdevelopment.workwatch.R;
+import nl.swiftdevelopment.workwatch.R.id;
+import nl.swiftdevelopment.workwatch.R.layout;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,16 +13,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class TimeBlockListViewAdapter extends ArrayAdapter<TimeBlock> {
-
-	ArrayList<TimeBlock> listOfBlocks = null;
+public class CategoryListViewAdapter extends ArrayAdapter<Category> {
+	ArrayList<Category> listOfCategories = null;
 	Activity activity;
 	private LayoutInflater inflater = null;
 
-	public TimeBlockListViewAdapter(Context context, int textViewResourceId,
-			ArrayList<TimeBlock> listOfBlocks, Activity activity) {
-		super(context, textViewResourceId, listOfBlocks);
-		this.listOfBlocks = listOfBlocks;
+	public CategoryListViewAdapter(Context context, int textViewResourceId,
+			ArrayList<Category> listOfCategories, Activity activity) {
+		super(context, textViewResourceId, listOfCategories);
+		this.listOfCategories = listOfCategories;
 
 		this.activity = activity;
 
@@ -31,20 +33,15 @@ public class TimeBlockListViewAdapter extends ArrayAdapter<TimeBlock> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ListCell cell;
 
-		
 		// ConvertView creates views for each item in the list.
 		// If there is no view created yet, convertView is null
 		if (convertView == null) {
 
-			convertView = inflater.inflate(
-					R.layout.time_block_view_cell, null);
+			convertView = inflater.inflate(R.layout.category_view_cell, null);
 			cell = new ListCell();
 
 			// Creating views for the items
-			cell.time = (TextView) convertView
-					.findViewById(R.id.block_time);
-			cell.title = (TextView) convertView
-					.findViewById(R.id.block_title);
+			cell.title = (TextView) convertView.findViewById(R.id.category_title);
 
 			convertView.setTag(cell);
 		} else {
@@ -54,17 +51,17 @@ public class TimeBlockListViewAdapter extends ArrayAdapter<TimeBlock> {
 			cell = (ListCell) convertView.getTag();
 		}
 
-		TimeBlock timeBlock = this.listOfBlocks.get(position);
-		
+		Category category = this.listOfCategories.get(position);
+
 		// Putting TimeBlock objects in the views
-		cell.title.setText(timeBlock.getTitle());
+		cell.title.setText(category.getTitle());
 
 		return convertView;
 	}
 
 	private class ListCell {
 
-		private TextView time, title;
+		private TextView title;
 
 	}
 }

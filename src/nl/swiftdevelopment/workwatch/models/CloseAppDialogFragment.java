@@ -1,5 +1,7 @@
-package nl.swiftdevelopment.workwatch;
+package nl.swiftdevelopment.workwatch.models;
 
+import nl.swiftdevelopment.workwatch.R;
+import nl.swiftdevelopment.workwatch.R.string;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;

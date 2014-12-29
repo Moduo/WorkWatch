@@ -2,6 +2,9 @@ package nl.swiftdevelopment.workwatch;
 
 import java.util.ArrayList;
 
+import nl.swiftdevelopment.workwatch.models.Category;
+import nl.swiftdevelopment.workwatch.models.CategoryListViewAdapter;
+import nl.swiftdevelopment.workwatch.models.TimeBlock;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;

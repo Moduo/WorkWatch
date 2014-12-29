@@ -1,4 +1,4 @@
-package nl.swiftdevelopment.workwatch;
+package nl.swiftdevelopment.workwatch.models;
 
 import java.util.ArrayList;
 

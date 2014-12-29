@@ -1,9 +1,14 @@
-package nl.swiftdevelopment.workwatch;
+package nl.swiftdevelopment.workwatch.models;
+
 
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import nl.swiftdevelopment.workwatch.R;
+import nl.swiftdevelopment.workwatch.WatchOverviewActivity;
+import nl.swiftdevelopment.workwatch.R.id;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
@@ -15,15 +20,18 @@ public class Time {
 	private String amount;
 	protected WatchOverviewActivity context;
 	private int id;
+	private long dbId;
 	private View view;
 	private Timer timer;
 	private boolean isRunning;
+	private Date startDateTime;
 	GridLayout layout;
 
 	public Time(Context context, int id, View view) {
 		this.context = (WatchOverviewActivity) context;
 		this.id = id;
 		this.view = view;
+		startDateTime = new Date();
 		start();
 
 	}
@@ -46,6 +54,20 @@ public class Time {
 		}else{
 			displayPause(true);
 		}
+	}
+
+	public int getId(){
+		return id;
+	}
+	
+	
+	
+	public long getDbId() {
+		return dbId;
+	}
+
+	public void setDbId(long dbId) {
+		this.dbId = dbId;
 	}
 
 	/**
@@ -83,6 +105,10 @@ public class Time {
 		}
 	}
 
+	public Date getStartDateTime(){
+		return startDateTime;
+	}
+	
 	public String getCurrentTime() {
 		return amount;
 	}
