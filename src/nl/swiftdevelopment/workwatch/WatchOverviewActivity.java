@@ -31,6 +31,8 @@ public class WatchOverviewActivity extends Activity {
 	private Category category;
 	private int categoryId;
 	private TimeBlockListViewAdapter adapter;
+	
+	private ArrayList<TimeBlock> listOfTimeBlocks;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +43,11 @@ public class WatchOverviewActivity extends Activity {
 
 		Intent intent = getIntent();
 
-		category = Category.getCategory(Integer.parseInt(intent
-				.getStringExtra("categoryId")));
+		
 		categoryId = Integer.parseInt(intent.getStringExtra("categoryId"));
 
+		category = Category.get(categoryId);
+		
 		Toast.makeText(
 				this,
 				"Category with id: " + intent.getStringExtra("categoryId")
@@ -57,10 +60,17 @@ public class WatchOverviewActivity extends Activity {
 		// TimeBlock.listOfTimeBlocks = new ArrayList<TimeBlock>();
 		// }
 
+		Log.d("DB", "Category ID: " + category.getId() );
+		
+		//Get TimeBlocks from category
+		listOfTimeBlocks = TimeBlock.getAll(category);
+		
+		Log.d("DB", "List of TimeBlocks size: " + listOfTimeBlocks.size() );
+		
 		if(adapter == null){
 		adapter = new TimeBlockListViewAdapter(
 				this, android.R.layout.simple_list_item_1,
-				Category.listOfCategoryTimeBlocks.get(categoryId), this);
+				listOfTimeBlocks, this);
 		}
 		gridView.setAdapter(adapter);
 
@@ -83,13 +93,13 @@ public class WatchOverviewActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 
-				TimeBlock timeBlock = Category.listOfCategoryTimeBlocks.get(
-						categoryId).get(position);
+				TimeBlock timeBlock = listOfTimeBlocks.get(position);
 				if (timeBlock.getTime().isRunning() == true) {
 					timeBlock.getTime().stop();
 				} else {
 					timeBlock.getTime().resume();
 				}
+				
 
 			}
 
@@ -99,13 +109,13 @@ public class WatchOverviewActivity extends Activity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
-
+/*
 				ArrayList<TimeBlock> category = Category.listOfCategoryTimeBlocks
 						.get(categoryId);
 				category.get(position).getTime().stop();
 				category.remove(position);
-
-				category.get(position).resetIdsOfTimers();
+*/
+				//category.get(position).resetIdsOfTimers();
 
 				adapter.notifyDataSetChanged();
 				Log.d("REMOVE", "Item with position " + position
@@ -186,18 +196,16 @@ public class WatchOverviewActivity extends Activity {
 	}
 
 	public void addTimeBlock(String label, View v) {
-		new TimeBlock(new Time(this, Category.listOfCategoryTimeBlocks.get(
-				categoryId).size(), v), label, category);
+		TimeBlock tb = new TimeBlock(new Time(this, listOfTimeBlocks.size(), v), label, category);
+		tb.save();
+		
 		Log.d("SIZE",
 				"List size: "
-						+ Category.listOfCategoryTimeBlocks.get(categoryId)
-								.size());
-		if (Category.listOfCategoryTimeBlocks.get(categoryId).size() > 1) {
+						+ listOfTimeBlocks.size());
+		if (listOfTimeBlocks.size() > 1) {
 			// Get the previously made time block.
-			TimeBlock timeBlock = Category.listOfCategoryTimeBlocks.get(
-					categoryId)
-					.get(Category.listOfCategoryTimeBlocks.get(categoryId)
-							.size() - 2);
+			TimeBlock timeBlock = listOfTimeBlocks.get(listOfTimeBlocks.size() - 2);
+			
 			if (timeBlock.getTime().isRunning() == true) {
 				timeBlock.getTime().stop();
 			}

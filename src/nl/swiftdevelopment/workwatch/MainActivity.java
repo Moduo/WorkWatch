@@ -1,6 +1,7 @@
 package nl.swiftdevelopment.workwatch;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import nl.swiftdevelopment.workwatch.models.Category;
 import nl.swiftdevelopment.workwatch.models.CategoryListViewAdapter;
@@ -20,15 +21,19 @@ import android.widget.Toast;
 
 public class MainActivity extends ListActivity {
 
+	public ArrayList<Category> listOfCategories;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		getActionBar().setTitle(getResources().getText(R.string.categories));
+		
+		listOfCategories = Category.getAll();
 
 		final CategoryListViewAdapter adapter = new CategoryListViewAdapter(
 				this, android.R.layout.simple_list_item_1,
-				Category.listOfCategories, this);
+				listOfCategories, this);
 		setListAdapter(adapter);
 	}
 
@@ -60,7 +65,7 @@ public class MainActivity extends ListActivity {
 		Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent(this, WatchOverviewActivity.class);
 
-		intent.putExtra("categoryId", "" + position);
+		intent.putExtra("categoryId", "" + (position + 1));
 
 		startActivity(intent);
 	}
@@ -79,14 +84,14 @@ public class MainActivity extends ListActivity {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = "" + input.getText();
 
-				// Create a new array list of time blocks for the category and
-				// add it to the 2D array listOfCategoryTimeBlocks
-				Category.listOfCategoryTimeBlocks
-						.add(TimeBlock.listOfTimeBlocks = new ArrayList<TimeBlock>());
-
-				new Category(value, Category.listOfCategoryTimeBlocks.size() -1);
-				Log.d("CATEGORIES", "The size of listOfCategories: "
-						+ Category.listOfCategories.size() + "\nSize of ListOfCategoryTimeBlocks: " + Category.listOfCategoryTimeBlocks.size());
+				//Make a Category object and save it.
+				Category cat = new Category(value);
+				cat.save();
+				
+				//Add the category to the list
+				listOfCategories = Category.getAll();
+				Log.d("DB", listOfCategories.toString());
+				
 			}
 		});
 
