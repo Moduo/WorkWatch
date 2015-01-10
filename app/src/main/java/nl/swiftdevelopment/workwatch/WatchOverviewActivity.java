@@ -1,14 +1,7 @@
 package nl.swiftdevelopment.workwatch;
 
-import java.util.ArrayList;
-
-import nl.swiftdevelopment.workwatch.models.Category;
-import nl.swiftdevelopment.workwatch.models.Time;
-import nl.swiftdevelopment.workwatch.models.TimeBlock;
-import nl.swiftdevelopment.workwatch.models.TimeBlockListViewAdapter;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -24,194 +17,217 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import nl.swiftdevelopment.workwatch.models.Category;
+import nl.swiftdevelopment.workwatch.models.Time;
+import nl.swiftdevelopment.workwatch.models.TimeBlock;
+import nl.swiftdevelopment.workwatch.models.TimeBlockListViewAdapter;
+
 public class WatchOverviewActivity extends Activity {
 
-	public GridView gridView;
-	private Activity activity;
-	private Category category;
-	private int categoryId;
-	private TimeBlockListViewAdapter adapter;
+    public GridView gridView;
+    private Activity activity;
+    private Category category;
+    private int categoryId;
+    private TimeBlockListViewAdapter adapter;
 
-	private ArrayList<TimeBlock> listOfTimeBlocks;
+    private ArrayList<TimeBlock> listOfTimeBlocks;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_watch_overview);
-		activity = this;
+        setContentView(R.layout.activity_watch_overview);
+        activity = this;
 
-		Intent intent = getIntent();
+        Intent intent = getIntent();
 
-		categoryId = Integer.parseInt(intent.getStringExtra("categoryId"));
+        categoryId = Integer.parseInt(intent.getStringExtra("categoryId"));
 
-		category = Category.get(categoryId);
+        category = Category.get(categoryId);
 
-		Toast.makeText(
-				this,
-				"Category with id: " + intent.getStringExtra("categoryId")
-						+ " is here.", Toast.LENGTH_SHORT).show();
-		gridView = (GridView) findViewById(R.id.grid_view);
+        Toast.makeText(
+                this,
+                "Category with id: " + intent.getStringExtra("categoryId")
+                        + " is here.", Toast.LENGTH_SHORT).show();
+        gridView = (GridView) findViewById(R.id.grid_view);
 
-		// We only want 1 list of Time Block's, so it's not overwritten when
-		// this activity is started again.
-		// if (TimeBlock.listOfTimeBlocks == null) {
-		// TimeBlock.listOfTimeBlocks = new ArrayList<TimeBlock>();
-		// }
+        // We only want 1 list of Time Block's, so it's not overwritten when
+        // this activity is started again.
+        // if (TimeBlock.listOfTimeBlocks == null) {
+        // TimeBlock.listOfTimeBlocks = new ArrayList<TimeBlock>();
+        // }
 
-		Log.d("DB", "Category ID: " + category.getId());
+        Log.d("DB", "Category ID: " + category.getId());
 
-		// Get TimeBlocks from category
-		listOfTimeBlocks = TimeBlock.getAll(category);
+        // Get TimeBlocks from category
+        listOfTimeBlocks = TimeBlock.getAll(category);
 
-		Log.d("DB", "List of TimeBlocks size: " + listOfTimeBlocks.size());
+        //Set context foreach Time of a TimeBlock in listOfTimeBlocks
+        for (TimeBlock tb : listOfTimeBlocks)
+            tb.getTime().setContext(this);
 
-		if (adapter == null) {
-			adapter = new TimeBlockListViewAdapter(this,
-					android.R.layout.simple_list_item_1, listOfTimeBlocks, this);
-		}
-		gridView.setAdapter(adapter);
 
-		/****************************** Add watch ***************************/
-		Button addBtn = (Button) findViewById(R.id.addBtn);
+        Log.d("DB", "List of TimeBlocks size: " + listOfTimeBlocks.size());
 
-		addBtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				EditText label = (EditText) findViewById(R.id.timeLabel);
-				addTimeBlock(label.getText().toString(), v);
-				label.setText("");
-			}
-		});
+        if (adapter == null) {
+            adapter = new TimeBlockListViewAdapter(this,
+                    android.R.layout.simple_list_item_1, listOfTimeBlocks, this);
+        }
+        gridView.setAdapter(adapter);
 
-		/****************************** Stop watch ***************************/
-		gridView.setOnItemClickListener(new OnItemClickListener() {
+        /****************************** Add watch ***************************/
+        Button addBtn = (Button) findViewById(R.id.addBtn);
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText label = (EditText) findViewById(R.id.timeLabel);
+                addTimeBlock(label.getText().toString(), v);
+                label.setText("");
+            }
+        });
 
-				TimeBlock timeBlock = listOfTimeBlocks.get(position);
-				if (timeBlock.getTime().isRunning() == true) {
-					timeBlock.getTime().stop();
-				} else {
-					timeBlock.getTime().resume();
-				}
+        /****************************** Stop watch ***************************/
+        gridView.setOnItemClickListener(new OnItemClickListener() {
 
-			}
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
 
-		});
-		gridView.setOnItemLongClickListener(new OnItemLongClickListener() {
+                TimeBlock timeBlock = listOfTimeBlocks.get(position);
+                Time time = timeBlock.getTime();
+                if (time.getView() == null) {
+                    time.setView(view);
+                }
 
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				/*
+                if (time.isRunning() == true) {
+                    time.stop();
+
+                    //Save the Time object because of the status change
+                    time.save();
+                } else {
+                    time.resume();
+
+                    //Save the Time object because of the status change
+                    time.save();
+                }
+
+            }
+
+        });
+        gridView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                           int position, long id) {
+                /*
 				 * ArrayList<TimeBlock> category =
 				 * Category.listOfCategoryTimeBlocks .get(categoryId);
 				 * category.get(position).getTime().stop();
 				 * category.remove(position);
 				 */
-				// category.get(position).resetIdsOfTimers();
+                // category.get(position).resetIdsOfTimers();
 
-				adapter.notifyDataSetChanged();
-				Log.d("REMOVE", "Item with position " + position
-						+ " has been removed.");
-				return true;
-			}
+                adapter.notifyDataSetChanged();
+                Log.d("REMOVE", "Item with position " + position
+                        + " has been removed.");
+                return true;
+            }
 
-		});
+        });
 
-		/******************** Action bar ***********************/
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setTitle(category.getTitle());
-	}
+        /******************** Action bar ***********************/
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setTitle(category.getTitle());
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		// getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+        // Inflate the menu; this adds items to the action bar if it is present.
+        // getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 		/*if (id == R.id.action_settings) {
 			return true;
 		}*/
-		if (id == android.R.id.home) {
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+        if (id == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	// Old onBackPressed with warning message
-	// @Override
-	// public void onBackPressed() {
-	// // Use the Builder class for convenient dialog construction
-	// AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	// builder.setMessage(R.string.dialog_close_app)
-	// .setPositiveButton(R.string.yes,
-	// new DialogInterface.OnClickListener() {
-	// public void onClick(DialogInterface dialog, int id) {
-	// activity.finish();
-	// }
-	// })
-	// .setNegativeButton(R.string.cancel,
-	// new DialogInterface.OnClickListener() {
-	// public void onClick(DialogInterface dialog, int id) {
-	// // User cancelled the dialog
-	// }
-	// });
-	//
-	// builder.show();
-	//
-	// }
-	@Override
-	public void onBackPressed() {
-		// NavUtils.navigateUpFromSameTask(this);
+    // Old onBackPressed with warning message
+    // @Override
+    // public void onBackPressed() {
+    // // Use the Builder class for convenient dialog construction
+    // AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    // builder.setMessage(R.string.dialog_close_app)
+    // .setPositiveButton(R.string.yes,
+    // new DialogInterface.OnClickListener() {
+    // public void onClick(DialogInterface dialog, int id) {
+    // activity.finish();
+    // }
+    // })
+    // .setNegativeButton(R.string.cancel,
+    // new DialogInterface.OnClickListener() {
+    // public void onClick(DialogInterface dialog, int id) {
+    // // User cancelled the dialog
+    // }
+    // });
+    //
+    // builder.show();
+    //
+    // }
+    @Override
+    public void onBackPressed() {
+        // NavUtils.navigateUpFromSameTask(this);
 
-		// This was to go to MainActivity without finishing this one to keep the
-		// TimeBlocks running.
-		Intent intent = new Intent(activity, MainActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		startActivity(intent);
-	}
+        // This was to go to MainActivity without finishing this one to keep the
+        // TimeBlocks running.
+        Intent intent = new Intent(activity, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
 
-	public static void hideSoftKeyboard(Activity activity) {
-		InputMethodManager inputMethodManager = (InputMethodManager) activity
-				.getSystemService(Activity.INPUT_METHOD_SERVICE);
-		inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus()
-				.getWindowToken(), 0);
-	}
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity
+                .getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus()
+                .getWindowToken(), 0);
+    }
 
-	public void addTimeBlock(String label, View v) {
-		Time time = new Time(this, listOfTimeBlocks.size(), v);
-		time.save();
+    public void addTimeBlock(String label, View v) {
+        Time time = new Time(this, listOfTimeBlocks.size(), v);
+        time.save();
 
-		TimeBlock tb = new TimeBlock(time, label, category);
-		tb.save();
+        TimeBlock tb = new TimeBlock(time, label, category);
+        tb.save();
 
-		listOfTimeBlocks.add(tb);
+        listOfTimeBlocks.add(tb);
 
-		Log.d("SIZE", "List size: " + listOfTimeBlocks.size());
-		if (listOfTimeBlocks.size() > 1) {
-			// Get the previously made time block.
-			TimeBlock timeBlock = listOfTimeBlocks
-					.get(listOfTimeBlocks.size() - 2);
+        Log.d("SIZE", "List size: " + listOfTimeBlocks.size());
+        if (listOfTimeBlocks.size() > 1) {
+            // Get the previously made time block.
+            TimeBlock timeBlock = listOfTimeBlocks
+                    .get(listOfTimeBlocks.size() - 2);
 
-			if (timeBlock.getTime().isRunning() == true) {
-				timeBlock.getTime().stop();
-			}
-		}
+            if (timeBlock.getTime().isRunning() == true) {
+                timeBlock.getTime().stop();
+            }
+        }
 
-		hideSoftKeyboard(this);
-	}
+        hideSoftKeyboard(this);
+    }
 
 }

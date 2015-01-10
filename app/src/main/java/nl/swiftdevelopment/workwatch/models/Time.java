@@ -67,11 +67,27 @@ public class Time extends Model {
 
         // Check if timer is running to set the pause button overlay for the
         // time block.
-        if (isRunning() == true) {
+        if (isRunning()) {
             displayPause(false);
         } else {
             displayPause(true);
         }
+    }
+
+    public void setAmount(String amount){
+        this.amount = amount;
+    }
+
+    public View getView(){
+        return this.view;
+    }
+
+    public void setView(View view){
+        this.view = view;
+    }
+
+    public void setContext(Context context){
+        this.context = (WatchOverviewActivity) context;
     }
 
     /**
@@ -81,10 +97,19 @@ public class Time extends Model {
      * @return A time object
      */
     public static Time getTimeById(long id) {
-        return new Select()
+        Time time = new Select()
                 .from(Time.class)
                 .where("Id = ?", id)
                 .executeSingle();
+
+        time.setAmount(time.getCurrentTime());
+
+
+        if(time.isRunning){
+            time.resume();
+        }
+
+        return time;
     }
 
     /**
@@ -111,7 +136,7 @@ public class Time extends Model {
      *             False == hide
      */
     private void displayPause(boolean bool) {
-        if (bool == true) {
+        if (bool) {
             // Display pause img as overlay on the timeblock
             layout = (GridLayout) this.context.gridView.getChildAt(position)
                     .findViewById(R.id.overlay);
@@ -153,25 +178,26 @@ public class Time extends Model {
     }
 
     public void stop() {
-        if (isRunning == true) {
+        if (isRunning && timer != null) {
             isRunning = false;
             timer.cancel();
             timer.purge();
 
-            displayPause(true);
+
         }
+        displayPause(true);
     }
 
     public void resume() {
-        if (isRunning == false) {
+        if (!isRunning) {
             // Declare new timer
             this.timer = new Timer();
 
             isRunning = true;
             // Devide the current time into hours, minutes and seconds
-            int hours = Integer.parseInt(amount.substring(0, 1));
-            int minutes = Integer.parseInt(amount.substring(2, 4));
-            int seconds = Integer.parseInt(amount.substring(5, 7));
+            int hours = Integer.parseInt(amount.substring(0, 2));
+            int minutes = Integer.parseInt(amount.substring(3, 5));
+            int seconds = Integer.parseInt(amount.substring(6, 8));
 
             timer.schedule(new UpdateUITask(hours, minutes, seconds), 0, 1000);
 
@@ -220,7 +246,7 @@ public class Time extends Model {
                 nMinutes = 0;
             }
 
-            amount = nHours + ":" + numberFormatter.format(nMinutes) + ":"
+            amount = numberFormatter.format(nHours) + ":" + numberFormatter.format(nMinutes) + ":"
                     + numberFormatter.format(nSeconds);
             Log.d("a", amount);
 
