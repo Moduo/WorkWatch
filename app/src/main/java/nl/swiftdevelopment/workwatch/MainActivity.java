@@ -6,6 +6,7 @@ import java.util.List;
 import nl.swiftdevelopment.workwatch.models.Category;
 import nl.swiftdevelopment.workwatch.models.CategoryListViewAdapter;
 import nl.swiftdevelopment.workwatch.models.TimeBlock;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -21,92 +22,92 @@ import android.widget.Toast;
 
 public class MainActivity extends ListActivity {
 
-	public static ArrayList<Category> listOfCategories;
+    public static ArrayList<Category> listOfCategories;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		getActionBar().setTitle(getResources().getText(R.string.categories));
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        getActionBar().setTitle(getResources().getText(R.string.categories));
 
-		// Check if there's a list present. If not, get all the categories from
-		// the database
-		if (listOfCategories == null || listOfCategories.isEmpty()){
-			Log.d("DB", "Getting new categories...");
-			listOfCategories = Category.getAll();
-		}
+        // Check if there's a list present. If not, get all the categories from
+        // the database
+        if (listOfCategories == null || listOfCategories.isEmpty()) {
+            Log.d("DB", "Getting new categories...");
+            listOfCategories = Category.getAll();
+        }
 
-		final CategoryListViewAdapter adapter = new CategoryListViewAdapter(
-				this, android.R.layout.simple_list_item_1, listOfCategories,
-				this);
-		setListAdapter(adapter);
-	}
+        final CategoryListViewAdapter adapter = new CategoryListViewAdapter(
+                this, android.R.layout.simple_list_item_1, listOfCategories,
+                this);
+        setListAdapter(adapter);
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.create_category) {
-			createCategory(item);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.create_category) {
+            createCategory(item);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		// TODO Auto-generated method stub
-		super.onListItemClick(l, v, position, id);
-		Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
-		Intent intent = new Intent(this, WatchOverviewActivity.class);
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, WatchOverviewActivity.class);
 
-		intent.putExtra("categoryId", "" + (position + 1));
+        intent.putExtra("categoryId", "" + (position + 1));
 
-		startActivity(intent);
-	}
+        startActivity(intent);
+    }
 
-	private void createCategory(MenuItem item) {
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    private void createCategory(MenuItem item) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-		alert.setTitle("Add a category");
-		// alert.setMessage("");
+        alert.setTitle("Add a category");
+        // alert.setMessage("");
 
-		// Set an EditText view to get user input
-		final EditText input = new EditText(this);
-		alert.setView(input);
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
 
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				String value = "" + input.getText();
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = "" + input.getText();
 
-				// Make a Category object and save it.
-				Category cat = new Category(value);
-				cat.save();
+                // Make a Category object and save it.
+                Category cat = new Category(value);
+                cat.save();
 
-				// Add the category to the list
-				listOfCategories.add(cat);
+                // Add the category to the list
+                listOfCategories.add(cat);
 
-			}
-		});
 
-		alert.setNegativeButton("Cancel",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						// Canceled.
-					}
-				});
+            }
+        });
 
-		alert.show();
-	}
+        alert.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Canceled.
+                    }
+                });
+
+        alert.show();
+    }
 
 }

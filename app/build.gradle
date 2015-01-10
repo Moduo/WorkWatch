@@ -20,5 +20,6 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:19.1.0'
+    compile 'joda-time:joda-time:2.3'
     compile files('libs/activeandroid-3.0.jar')
 }

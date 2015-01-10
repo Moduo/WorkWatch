@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import nl.swiftdevelopment.workwatch.R;
 import nl.swiftdevelopment.workwatch.R.id;
 import nl.swiftdevelopment.workwatch.R.layout;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,60 +16,61 @@ import android.widget.TextView;
 
 public class TimeBlockListViewAdapter extends ArrayAdapter<TimeBlock> {
 
-	ArrayList<TimeBlock> listOfBlocks = null;
-	Activity activity;
-	private LayoutInflater inflater = null;
+    ArrayList<TimeBlock> listOfBlocks = null;
+    Activity activity;
+    private LayoutInflater inflater = null;
 
-	public TimeBlockListViewAdapter(Context context, int textViewResourceId,
-			ArrayList<TimeBlock> listOfBlocks, Activity activity) {
-		super(context, textViewResourceId, listOfBlocks);
-		this.listOfBlocks = listOfBlocks;
+    public TimeBlockListViewAdapter(Context context, int textViewResourceId,
+                                    ArrayList<TimeBlock> listOfBlocks, Activity activity) {
+        super(context, textViewResourceId, listOfBlocks);
+        this.listOfBlocks = listOfBlocks;
 
-		this.activity = activity;
+        this.activity = activity;
 
-		inflater = (LayoutInflater) this.activity
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	}
+        inflater = (LayoutInflater) this.activity
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		ListCell cell;
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ListCell cell;
 
-		
-		// ConvertView creates views for each item in the list.
-		// If there is no view created yet, convertView is null
-		if (convertView == null) {
 
-			convertView = inflater.inflate(
-					R.layout.time_block_view_cell, null);
-			cell = new ListCell();
+        // ConvertView creates views for each item in the list.
+        // If there is no view created yet, convertView is null
+        if (convertView == null) {
 
-			// Creating views for the items
-			cell.time = (TextView) convertView
-					.findViewById(R.id.block_time);
-			cell.title = (TextView) convertView
-					.findViewById(R.id.block_title);
+            convertView = inflater.inflate(
+                    R.layout.time_block_view_cell, null);
+            cell = new ListCell();
 
-			convertView.setTag(cell);
-		} else {
+            // Creating views for the items
+            cell.time = (TextView) convertView
+                    .findViewById(R.id.block_time);
+            cell.title = (TextView) convertView
+                    .findViewById(R.id.block_title);
 
-			// The event handler will always select the right view because
-			// getTag points to the current button pressed
-			cell = (ListCell) convertView.getTag();
-		}
+            convertView.setTag(cell);
+        } else {
 
-		TimeBlock timeBlock = this.listOfBlocks.get(position);
-		
-		// Putting TimeBlock objects in the views
-		cell.title.setText(timeBlock.getTitle());
-		cell.time.setText(timeBlock.getTime().getCurrentTime() + "");
+            // The event handler will always select the right view because
+            // getTag points to the current button pressed
+            cell = (ListCell) convertView.getTag();
+        }
 
-		return convertView;
-	}
+        TimeBlock timeBlock = this.listOfBlocks.get(position);
 
-	private class ListCell {
 
-		private TextView time, title;
+        // Putting TimeBlock objects in the views
+        cell.title.setText(timeBlock.getTitle());
+        cell.time.setText((timeBlock.getTime().getCurrentTime() == null) ? "0:00:00" : timeBlock.getTime().getCurrentTime());
 
-	}
+        return convertView;
+    }
+
+    private class ListCell {
+
+        private TextView time, title;
+
+    }
 }

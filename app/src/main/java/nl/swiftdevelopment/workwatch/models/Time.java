@@ -1,12 +1,5 @@
 package nl.swiftdevelopment.workwatch.models;
 
-import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import nl.swiftdevelopment.workwatch.R;
-import nl.swiftdevelopment.workwatch.WatchOverviewActivity;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
@@ -16,193 +9,227 @@ import android.widget.TextView;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
+
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import nl.swiftdevelopment.workwatch.R;
+import nl.swiftdevelopment.workwatch.WatchOverviewActivity;
 
 @Table(name = "Time")
 public class Time extends Model {
-	
-	@Column(name = "isRunning")
-	private boolean isRunning;
-	
-	@Column(name = "startDateTime")
-	private Date startDateTime;
-	
-	private final static DecimalFormat numberFormatter = new DecimalFormat("00");
-	private String amount;
-	protected WatchOverviewActivity context;
-	private View view;
-	private Timer timer;
-	
-	//The position of the timeblock in the gridview
-	int position;
-	
-	GridLayout layout;
 
-	public Time(Context context, int position, View view) {
-		this.context = (WatchOverviewActivity) context;
-		this.position = position;
-		this.view = view;
-		startDateTime = new Date();
-		start();
+    @Column(name = "isRunning")
+    private boolean isRunning;
 
-	}
+    @Column(name = "startDateTime")
+    private Date startDateTime;
 
-	/**
-	 * This method is strictly for resetting id's only. When removing a
-	 * TimeBlock from the GridView, this method is used to reset the ID's of the
-	 * timers for a proper id/position ratio.
-	 * 
-	 * @param id
-	 */
-	public void setId(int id) {
-		this.position = id;
-		rewriteTextView();
+    private final static DecimalFormat numberFormatter = new DecimalFormat("00");
+    private String amount;
+    protected WatchOverviewActivity context;
+    private View view;
+    private Timer timer;
 
-		// Check if timer is running to set the pause button overlay for the
-		// time block.
-		if (isRunning() == true) {
-			displayPause(false);
-		} else {
-			displayPause(true);
-		}
-	}
+    //The position of the timeblock in the gridview
+    int position;
 
-	
+    GridLayout layout;
 
-	/**
-	 * Rewrite the time of the textview with the current time of this object.
-	 */
-	private void rewriteTextView() {
-		try {
-			// Get current TimeBlock and start setting the text on
-			// the TextView each second.
-			TextView blockTime = (TextView) context.gridView.getChildAt(position)
-					.findViewById(R.id.block_time);
-			blockTime.setText(amount);
+    public Time() {
+        super();
+    }
 
-			Log.d("ID", "" + view.getId());
-		} catch (Exception e) {
-			Log.d("NEW", "NPE");
-		}
-	}
+    public Time(Context context, int position, View view) {
+        this.context = (WatchOverviewActivity) context;
+        this.position = position;
+        this.view = view;
+        startDateTime = new Date();
+        start();
 
-	/**
-	 * Display or hide the pause button as overlay for the time block.
-	 * 
-	 * @param bool
-	 *            True == display <br />
-	 *            False == hide
-	 */
-	private void displayPause(boolean bool) {
-		if (bool == true) {
-			// Display pause img as overlay on the timeblock
-			layout = (GridLayout) this.context.gridView.getChildAt(position)
-					.findViewById(R.id.overlay);
-			layout.setVisibility(View.VISIBLE);
-		} else {
-			// Remove pause overlay
-			layout = (GridLayout) this.context.gridView.getChildAt(position)
-					.findViewById(R.id.overlay);
-			layout.setVisibility(View.INVISIBLE);
-		}
-	}
+    }
 
-	public Date getStartDateTime() {
-		return startDateTime;
-	}
+    /**
+     * This method is strictly for resetting id's only. When removing a
+     * TimeBlock from the GridView, this method is used to reset the ID's of the
+     * timers for a proper id/position ratio.
+     *
+     * @param id
+     */
+    public void setId(int id) {
+        this.position = id;
+        rewriteTextView();
 
-	public String getCurrentTime() {
-		return amount;
-	}
+        // Check if timer is running to set the pause button overlay for the
+        // time block.
+        if (isRunning() == true) {
+            displayPause(false);
+        } else {
+            displayPause(true);
+        }
+    }
 
-	public boolean isRunning() {
-		return isRunning;
-	}
+    /**
+     * This method gets the Time from the database by its
+     *
+     * @param id The ID of the Time obj (which is the same as its parent ID (the TimeBlock))
+     * @return A time object
+     */
+    public static Time getTimeById(long id) {
+        return new Select()
+                .from(Time.class)
+                .where("Id = ?", id)
+                .executeSingle();
+    }
 
-	public void start() {
-		timer = new Timer();
-		timer.schedule(new UpdateUITask(), 0, 1000);
-		isRunning = true;
-	}
+    /**
+     * Rewrite the time of the textview with the current time of this object.
+     */
+    private void rewriteTextView() {
+        try {
+            // Get current TimeBlock and start setting the text on
+            // the TextView each second.
+            TextView blockTime = (TextView) context.gridView.getChildAt(position)
+                    .findViewById(R.id.block_time);
+            blockTime.setText(amount);
 
-	public void stop() {
-		isRunning = false;
-		timer.cancel();
-		timer.purge();
+            Log.d("ID", "" + view.getId());
+        } catch (Exception e) {
+            Log.d("NEW", "NPE");
+        }
+    }
 
-		displayPause(true);
-	}
+    /**
+     * Display or hide the pause button as overlay for the time block.
+     *
+     * @param bool True == display <br />
+     *             False == hide
+     */
+    private void displayPause(boolean bool) {
+        if (bool == true) {
+            // Display pause img as overlay on the timeblock
+            layout = (GridLayout) this.context.gridView.getChildAt(position)
+                    .findViewById(R.id.overlay);
+            layout.setVisibility(View.VISIBLE);
+        } else {
+            // Remove pause overlay
+            layout = (GridLayout) this.context.gridView.getChildAt(position)
+                    .findViewById(R.id.overlay);
+            layout.setVisibility(View.INVISIBLE);
+        }
+    }
 
-	public void resume() {
-		if (isRunning == false) {
-			// Declare new timer
-			this.timer = new Timer();
+    public Date getStartDateTime() {
+        return startDateTime;
+    }
 
-			isRunning = true;
-			// Devide the current time into hours, minutes and seconds
-			int hours = Integer.parseInt(amount.substring(0, 1));
-			int minutes = Integer.parseInt(amount.substring(2, 4));
-			int seconds = Integer.parseInt(amount.substring(5, 7));
+    public String getCurrentTime() {
+        Date date = null;
+        try {
+            date = DateDiff.substractDates(new Date(), startDateTime);
+        } catch (Exception e) {
 
-			timer.schedule(new UpdateUITask(hours, minutes, seconds), 0, 1000);
+        }
+        DateFormat df = new SimpleDateFormat("HH:mm:ss");
+        String time = df.format(date);
+        Log.d("TIME", "Current time: " + time);
+        return time;
+    }
 
-			displayPause(false);
-		} else {
-			System.out.println("Timer is already running.");
-		}
-	}
 
-	public class UpdateUITask extends TimerTask {
+    public boolean isRunning() {
+        return isRunning;
+    }
 
-		int nSeconds;
-		int nMinutes;
-		int nHours;
+    public void start() {
+        timer = new Timer();
+        timer.schedule(new UpdateUITask(), 0, 1000);
+        isRunning = true;
+    }
 
-		public UpdateUITask() {
-			nSeconds = 0;
-			nMinutes = 0;
-			nHours = 0;
-		}
+    public void stop() {
+        if (isRunning == true) {
+            isRunning = false;
+            timer.cancel();
+            timer.purge();
 
-		/**
-		 * Call this constructor if you want to resume a timer that is paused.
-		 * 
-		 * @param s
-		 *            for the seconds in the timer
-		 * @param m
-		 *            for the minutes in the timer
-		 * @param h
-		 *            for the hours in the timer
-		 */
-		public UpdateUITask(int h, int m, int s) {
-			this.nSeconds = s;
-			this.nMinutes = m;
-			this.nHours = h;
-		}
+            displayPause(true);
+        }
+    }
 
-		@Override
-		public void run() {
+    public void resume() {
+        if (isRunning == false) {
+            // Declare new timer
+            this.timer = new Timer();
 
-			nSeconds++;
+            isRunning = true;
+            // Devide the current time into hours, minutes and seconds
+            int hours = Integer.parseInt(amount.substring(0, 1));
+            int minutes = Integer.parseInt(amount.substring(2, 4));
+            int seconds = Integer.parseInt(amount.substring(5, 7));
 
-			if (nSeconds == 60) {
-				nMinutes++;
-				nSeconds = 0;
-			}
-			if (nMinutes == 60) {
-				nHours++;
-				nMinutes = 0;
-			}
+            timer.schedule(new UpdateUITask(hours, minutes, seconds), 0, 1000);
 
-			amount = nHours + ":" + numberFormatter.format(nMinutes) + ":"
-					+ numberFormatter.format(nSeconds);
-			Log.d("a", amount);
+            displayPause(false);
+        } else {
+            System.out.println("Timer is already running.");
+        }
+    }
 
-			context.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					rewriteTextView();
-				}
-			});
-		}
-	}
+    public class UpdateUITask extends TimerTask {
+
+        int nSeconds;
+        int nMinutes;
+        int nHours;
+
+        public UpdateUITask() {
+            nSeconds = 0;
+            nMinutes = 0;
+            nHours = 0;
+        }
+
+        /**
+         * Call this constructor if you want to resume a timer that is paused.
+         *
+         * @param s for the seconds in the timer
+         * @param m for the minutes in the timer
+         * @param h for the hours in the timer
+         */
+        public UpdateUITask(int h, int m, int s) {
+            this.nSeconds = s;
+            this.nMinutes = m;
+            this.nHours = h;
+        }
+
+        @Override
+        public void run() {
+
+            nSeconds++;
+
+            if (nSeconds == 60) {
+                nMinutes++;
+                nSeconds = 0;
+            }
+            if (nMinutes == 60) {
+                nHours++;
+                nMinutes = 0;
+            }
+
+            amount = nHours + ":" + numberFormatter.format(nMinutes) + ":"
+                    + numberFormatter.format(nSeconds);
+            Log.d("a", amount);
+
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    rewriteTextView();
+                }
+            });
+        }
+    }
 }
