@@ -30,8 +30,11 @@ public class Time extends Model {
     @Column(name = "startDateTime")
     private Date startDateTime;
 
-    private final static DecimalFormat numberFormatter = new DecimalFormat("00");
+    @Column(name = "seconds")
+    private int seconds;
+
     private String amount;
+    private final static DecimalFormat numberFormatter = new DecimalFormat("00");
     protected WatchOverviewActivity context;
     private View view;
     private Timer timer;
@@ -49,44 +52,25 @@ public class Time extends Model {
         this.context = (WatchOverviewActivity) context;
         this.position = position;
         this.view = view;
-        startDateTime = new Date();
+
         start();
 
     }
 
-    /**
-     * This method is strictly for resetting id's only. When removing a
-     * TimeBlock from the GridView, this method is used to reset the ID's of the
-     * timers for a proper id/position ratio.
-     *
-     * @param id
-     */
-    public void setId(int id) {
-        this.position = id;
-        rewriteTextView();
 
-        // Check if timer is running to set the pause button overlay for the
-        // time block.
-        if (isRunning()) {
-            displayPause(false);
-        } else {
-            displayPause(true);
-        }
-    }
-
-    public void setAmount(String amount){
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 
-    public View getView(){
+    public View getView() {
         return this.view;
     }
 
-    public void setView(View view){
+    public void setView(View view) {
         this.view = view;
     }
 
-    public void setContext(Context context){
+    public void setContext(Context context) {
         this.context = (WatchOverviewActivity) context;
     }
 
@@ -105,7 +89,7 @@ public class Time extends Model {
         time.setAmount(time.getCurrentTime());
 
 
-        if(time.isRunning){
+        if (time.isRunning) {
             time.resume();
         }
 
@@ -155,15 +139,28 @@ public class Time extends Model {
 
     public String getCurrentTime() {
         Date date = null;
+
         try {
             date = DateDiff.substractDates(new Date(), startDateTime);
         } catch (Exception e) {
 
         }
+
         DateFormat df = new SimpleDateFormat("HH:mm:ss");
         String time = df.format(date);
         Log.d("TIME", "Current time: " + time);
         return time;
+    }
+
+    private int getCurrentSeconds() {
+        String timeStr = getCurrentTime();
+
+        //Break the timeStr up in hours, mins, secs
+        int hours = Integer.parseInt(timeStr.substring(0, 2)),
+                minutes = Integer.parseInt(timeStr.substring(3, 5)),
+                seconds = Integer.parseInt(timeStr.substring(6, 8));
+
+        return (hours * 3600) + (minutes * 60) + seconds;
     }
 
 
@@ -172,19 +169,33 @@ public class Time extends Model {
     }
 
     public void start() {
+        //Start the counting
         timer = new Timer();
         timer.schedule(new UpdateUITask(), 0, 1000);
+
+        //Set isRunning to true and set the startDateTime to the current sysdate
         isRunning = true;
+        startDateTime = new Date();
+
+
     }
 
     public void stop() {
-        if (isRunning && timer != null) {
+        if (isRunning) {
             isRunning = false;
+
+            //Stop the counting
             timer.cancel();
             timer.purge();
 
+            //Set the current time
+            this.seconds = getCurrentSeconds();
 
+            //Set the startDateTime to null, because it's not running anymore.
+            startDateTime = null;
         }
+
+
         displayPause(true);
     }
 
@@ -194,6 +205,8 @@ public class Time extends Model {
             this.timer = new Timer();
 
             isRunning = true;
+            startDateTime = new Date();
+
             // Devide the current time into hours, minutes and seconds
             int hours = Integer.parseInt(amount.substring(0, 2));
             int minutes = Integer.parseInt(amount.substring(3, 5));

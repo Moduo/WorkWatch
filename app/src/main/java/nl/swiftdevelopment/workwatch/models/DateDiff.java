@@ -34,4 +34,20 @@ public class DateDiff {
 
         return result;
     }
+
+    /**
+     * This method adds seconds to a java.util.Date object.
+     * @param date The date you want to add seconds to
+     * @param seconds The seconds you want to add
+     * @return The java.util.Date with the added seconds.
+     */
+    public static Date addSeconds(Date date, int seconds){
+        //Convert the Date object to DateTime
+        DateTime dt = new DateTime(date);
+
+        //Add the Seconds to the DateTime object
+        dt.plusSeconds(seconds);
+
+        return dt.toDate();
+    }
 }

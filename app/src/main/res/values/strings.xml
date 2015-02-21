@@ -12,4 +12,10 @@
     <string name="create">Create</string>
     <string name="categories">Categories</string>
 
+    <!-- Icons -->
+    <string name="icon_heart">&#xf004;</string>
+    <string name="icon_check">&#xf00c;</string>
+    <string name="icon_watch">&#xf017;</string>
+    <string name="icon_play">&#xf01d;</string>
+
 </resources>

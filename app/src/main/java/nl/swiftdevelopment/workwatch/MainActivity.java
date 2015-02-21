@@ -1,12 +1,5 @@
 package nl.swiftdevelopment.workwatch;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import nl.swiftdevelopment.workwatch.models.Category;
-import nl.swiftdevelopment.workwatch.models.CategoryListViewAdapter;
-import nl.swiftdevelopment.workwatch.models.TimeBlock;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -19,6 +12,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+
+import nl.swiftdevelopment.workwatch.models.Category;
+import nl.swiftdevelopment.workwatch.models.CategoryListViewAdapter;
 
 public class MainActivity extends ListActivity {
 

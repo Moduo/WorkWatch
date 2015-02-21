@@ -2,6 +2,7 @@ package nl.swiftdevelopment.workwatch;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -38,6 +39,8 @@ public class WatchOverviewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
+
         setContentView(R.layout.activity_watch_overview);
         activity = this;
 
@@ -65,9 +68,13 @@ public class WatchOverviewActivity extends Activity {
         listOfTimeBlocks = TimeBlock.getAll(category);
 
         //Set context foreach Time of a TimeBlock in listOfTimeBlocks
-        for (TimeBlock tb : listOfTimeBlocks)
-            tb.getTime().setContext(this);
+        for (TimeBlock tb : listOfTimeBlocks) {
+            Time time = tb.getTime();
+            time.setContext(this);
 
+            if(time.isRunning())
+                time.resume();
+        }
 
         Log.d("DB", "List of TimeBlocks size: " + listOfTimeBlocks.size());
 
@@ -79,6 +86,7 @@ public class WatchOverviewActivity extends Activity {
 
         /****************************** Add watch ***************************/
         Button addBtn = (Button) findViewById(R.id.addBtn);
+        addBtn.setTypeface(font);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,12 +113,12 @@ public class WatchOverviewActivity extends Activity {
                 if (time.isRunning() == true) {
                     time.stop();
 
-                    //Save the Time object because of the status change
+                    //Save the Time object because of the status change and time management
                     time.save();
                 } else {
                     time.resume();
 
-                    //Save the Time object because of the status change
+                    //Save the Time object because of the status change and time management
                     time.save();
                 }
 
@@ -123,7 +131,7 @@ public class WatchOverviewActivity extends Activity {
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                                            int position, long id) {
                 /*
-				 * ArrayList<TimeBlock> category =
+                 * ArrayList<TimeBlock> category =
 				 * Category.listOfCategoryTimeBlocks .get(categoryId);
 				 * category.get(position).getTime().stop();
 				 * category.remove(position);
